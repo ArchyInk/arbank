@@ -15,8 +15,11 @@ importers:
         specifier: ^20.0.0
         version: 20.17.10
       husky:
-        specifier: ^9.1.7
+        specifier: ^9.0.0
         version: 9.1.7
+      simple-git-hooks:
+        specifier: ^2.11.1
+        version: 2.11.1
       typescript:
         specifier: ^5.0.0
         version: 5.7.2
@@ -832,6 +835,10 @@ packages:
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
+
+  simple-git-hooks@2.11.1:
+    resolution: {integrity: sha512-tgqwPUMDcNDhuf1Xf6KTUsyeqGdgKMhzaH4PAZZuzguOgTl5uuyeYe/8mWgAr6IBxB5V06uqEf6Dy37gIWDtDg==}
+    hasBin: true
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
@@ -1764,6 +1771,8 @@ snapshots:
   siginfo@2.0.0: {}
 
   signal-exit@4.1.0: {}
+
+  simple-git-hooks@2.11.1: {}
 
   sisteransi@1.0.5: {}
 
