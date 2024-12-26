@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 获取提交消息
+COMMIT_MSG_FILE=$1
+MESSAGE=$(cat $COMMIT_MSG_FILE)
+
+# 允许changeset和版本更新提交通过
+if echo "$MESSAGE" | grep -q "^chore: add changeset\|^chore: version packages"; then
+  exit 0
+fi
+
+# 检查是否是通过我们的工具提交的
+if [ "$ARBANK_COMMIT" != "true" ]; then
+  echo "❌ 请使用 'pnpm commit' 命令来提交代码"
+  exit 1
+fi 

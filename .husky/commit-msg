@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 如果不是通过我们的工具提交的，阻止提交
+if [ "$ARBANK_COMMIT" != "true" ]; then
+  echo "❌ 请使用 'pnpm commit' 命令来提交代码"
+  exit 1
+fi 

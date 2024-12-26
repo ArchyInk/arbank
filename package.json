@@ -8,10 +8,13 @@
     "clean": "pnpm -r clean",
     "changeset": "changeset",
     "version": "changeset version",
-    "publish": "pnpm build && changeset publish"
+    "publish": "pnpm build && changeset publish",
+    "prepare": "husky",
+    "commit": "cd packages/git-commit && bun run src/cli.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
+    "husky": "^9.0.0",
     "typescript": "^5.0.0",
     "@types/node": "^20.0.0"
   },
@@ -19,4 +22,4 @@
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   }
-} 
+}
