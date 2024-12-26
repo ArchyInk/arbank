@@ -1,6 +1,6 @@
 {
   "name": "@arbank/git-commit",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -12,9 +12,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist --target node",
+    "build": "bun build ./src/cli.ts --target node --outfile ./dist/cli.js && bun build ./src/index.ts --target node --outfile ./dist/index.js && tsc --emitDeclarationOnly",
     "dev": "bun run src/cli.ts",
-    "clean": "rm -rf dist",
+    "clean:linux": "rm -rf dist",
+    "clean": "del /s /q dist",
     "test": "bun test",
     "prepublishOnly": "bun run build"
   },
