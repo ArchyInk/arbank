@@ -3,37 +3,26 @@ import { promptCommitMessage, formatCommitMessage } from './index';
 import { spawn } from 'child_process';
 import kleur from 'kleur';
 
-const execGitCommand = (args: string[], options = {}) => {
+const execGitCommand = (args: string[], options = {}): Promise<string> => {
   return new Promise((resolve, reject) => {
-    // 在Windows下，如果参数包含空格，需要特殊处理
-    const processedArgs = args.map(arg => {
-      if (arg.includes(' ')) {
-        // 确保使用双引号，并处理可能的内部引号
-        return `"${arg.replace(/"/g, '\\"')}"`;
-      }
-      return arg;
+    const git = spawn('git', args, {
+      stdio: ['inherit', 'pipe', 'pipe'],
+      ...options
     });
 
-    // 在Windows下，我们使用cmd.exe来执行git命令
-    const isWindows = process.platform === 'win32';
-    const command = isWindows ? ['git', ...processedArgs].join(' ') : 'git';
-    const spawnArgs = isWindows ? ['/c', command] : args;
-    const spawnOptions = isWindows ? { shell: true, ...options } : options;
-
-    const git = spawn(
-      isWindows ? process.env.ComSpec || 'cmd.exe' : 'git',
-      spawnArgs,
-      {
-        stdio: 'inherit',
-        ...spawnOptions
-      }
-    );
+    let output = '';
+    git.stdout?.on('data', (data) => {
+      output += data;
+    });
+    git.stderr?.on('data', (data) => {
+      output += data;
+    });
 
     git.on('close', (code) => {
       if (code === 0) {
-        resolve(null);
+        resolve(output);
       } else {
-        reject(new Error(`Git command failed with code ${code}`));
+        reject(new Error(output || `Git command failed with code ${code}`));
       }
     });
   });
@@ -42,34 +31,16 @@ const execGitCommand = (args: string[], options = {}) => {
 async function main() {
   try {
     // 检查是否在git仓库中
-    const gitStatus = spawn('git', ['status'], {
-      stdio: 'ignore'
-    });
-
-    await new Promise((resolve, reject) => {
-      gitStatus.on('close', (code) => {
-        if (code !== 0) {
-          reject(new Error('当前目录不是git仓库'));
-        }
-        resolve(null);
-      });
-    });
+    try {
+      await execGitCommand(['rev-parse', '--git-dir']);
+    } catch (error) {
+      console.error(kleur.red('✘ 当前目录不是git仓库'));
+      process.exit(1);
+    }
 
     // 检查是否有可提交的更改
-    const checkStatus = spawn('git', ['status', '--porcelain'], {
-      stdio: 'pipe'
-    });
-
-    let hasChanges = false;
-    checkStatus.stdout.on('data', (data) => {
-      if (data.toString().trim()) {
-        hasChanges = true;
-      }
-    });
-
-    await new Promise((resolve) => checkStatus.on('close', resolve));
-
-    if (!hasChanges) {
+    const status = await execGitCommand(['status', '--porcelain']);
+    if (!status.trim()) {
       console.log(kleur.yellow('✘ 没有可提交的更改'));
       process.exit(1);
     }
@@ -80,10 +51,7 @@ async function main() {
     // 设置环境变量标记这是通过我们的工具提交的
     const env = {
       ...process.env,
-      ARBANK_COMMIT: 'true',
-      // Windows下需要显式设置这些shell相关的环境变量
-      SHELL: process.env.SHELL || process.env.ComSpec,
-      PATH: process.env.PATH
+      ARBANK_COMMIT: 'true'
     };
 
     // 自动添加所有更改到暂存区
@@ -96,7 +64,11 @@ async function main() {
 
     console.log(kleur.green('✔ 提交成功！'));
   } catch (error) {
-    console.error(kleur.red('✘ 发生错误：'), error);
+    if (error instanceof Error) {
+      console.error(kleur.red('✘ 发生错误：'), error.message);
+    } else {
+      console.error(kleur.red('✘ 发生未知错误'));
+    }
     process.exit(1);
   }
 }
