@@ -1,8 +1,7 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+#!/usr/bin/env node
 
-# 如果不是通过我们的工具提交的，阻止提交
-if [ "$ARBANK_COMMIT" != "true" ]; then
-  echo "❌ 请使用 'pnpm commit' 命令来提交代码"
-  exit 1
-fi 
+// 如果不是通过我们的工具提交的，阻止提交
+if (process.env.ARBANK_COMMIT !== 'true') {
+  console.log('❌ 请使用 \'pnpm commit\' 命令来提交代码');
+  process.exit(1);
+} 

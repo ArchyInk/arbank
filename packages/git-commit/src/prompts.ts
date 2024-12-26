@@ -62,6 +62,6 @@ export async function promptCommitMessage() {
     subject: response.subject,
     body: response.body || undefined,
     breaking: response.breaking,
-    issues: response.issues ? response.issues.split(',').map(i => i.trim()) : undefined
+    issues: response.issues ? response.issues.split(',').map((i: string) => i.trim()) : undefined
   };
 } 

@@ -43,8 +43,7 @@ async function main() {
   try {
     // 检查是否在git仓库中
     const gitStatus = spawn('git', ['status'], {
-      stdio: 'ignore',
-      shell: true
+      stdio: 'ignore'
     });
 
     await new Promise((resolve, reject) => {
@@ -58,12 +57,11 @@ async function main() {
 
     // 检查是否有可提交的更改
     const checkStatus = spawn('git', ['status', '--porcelain'], {
-      stdio: 'pipe',
-      shell: true
+      stdio: 'pipe'
     });
 
     let hasChanges = false;
-    checkStatus.stdout?.on('data', (data) => {
+    checkStatus.stdout.on('data', (data) => {
       if (data.toString().trim()) {
         hasChanges = true;
       }

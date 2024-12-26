@@ -2,6 +2,7 @@
   "name": "arbank-tools",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test",
